@@ -44,11 +44,21 @@ except ImportError:
 http_client.HTTPConnection.debuglevel = 1
 
 app = Flask(__name__)
+
+if not os.path.isdir('logs'):
+    os.makedirs('logs')
+log_file = "logs/productpage.log"
+fileHandler = logging.FileHandler(log_file)
+fileHandler.setLevel(logging.DEBUG)
+
 logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
 requests_log = logging.getLogger("requests.packages.urllib3")
 requests_log.setLevel(logging.DEBUG)
 requests_log.propagate = True
+requests_log.addHandler(fileHandler)
+
 app.logger.addHandler(logging.StreamHandler(sys.stdout))
+app.logger.addHandler(fileHandler)
 app.logger.setLevel(logging.DEBUG)
 
 # Set the secret key to some random bytes. Keep this really secret!
@@ -256,7 +266,7 @@ def index():
 
     table = json2html.convert(json=json.dumps(productpage),
                               table_attributes="class=\"table table-condensed table-bordered table-hover\"")
-
+    app.logger.info("access index.")
     return render_template('index.html', serviceTable=table)
 
 
