@@ -80,6 +80,13 @@ spec:
           protocol: TCP
         securityContext:
           runAsUser: 1000
+        resources:
+          limits:
+            cpu: 4000m
+            memory: 8Gi
+          requests:
+            cpu: 100m
+            memory: 128Mi
 ---
 ##################################################################################################
 # Ratings service
@@ -135,6 +142,13 @@ spec:
           protocol: TCP
         securityContext:
           runAsUser: 1000
+        resources:
+          limits:
+            cpu: 4000m
+            memory: 8Gi
+          requests:
+            cpu: 100m
+            memory: 128Mi
 ---
 ##################################################################################################
 # Reviews service
@@ -198,6 +212,13 @@ spec:
           mountPath: /opt/ibm/wlp/output
         securityContext:
           runAsUser: 1000
+        resources:
+          limits:
+            cpu: 4000m
+            memory: 8Gi
+          requests:
+            cpu: 100m
+            memory: 128Mi
       volumes:
       - name: wlp-output
         emptyDir: {}
@@ -241,6 +262,13 @@ spec:
           mountPath: /opt/ibm/wlp/output
         securityContext:
           runAsUser: 1000
+        resources:
+          limits:
+            cpu: 4000m
+            memory: 8Gi
+          requests:
+            cpu: 100m
+            memory: 128Mi
       volumes:
       - name: wlp-output
         emptyDir: {}
@@ -284,6 +312,13 @@ spec:
           mountPath: /opt/ibm/wlp/output
         securityContext:
           runAsUser: 1000
+        resources:
+          limits:
+            cpu: 4000m
+            memory: 8Gi
+          requests:
+            cpu: 100m
+            memory: 128Mi
       volumes:
       - name: wlp-output
         emptyDir: {}
@@ -306,10 +341,8 @@ spec:
     name: http
     protocol: TCP
     targetPort: 9080
-    nodePort: 31395
   selector:
     app: productpage
-  type: NodePort
 ---
 apiVersion: v1
 kind: ServiceAccount
@@ -348,6 +381,43 @@ spec:
         volumeMounts:
         - name: tmp
           mountPath: /tmp
+        resources:
+          limits:
+            cpu: 4000m
+            memory: 8Gi
+          requests:
+            cpu: 100m
+            memory: 128Mi
       volumes:
       - name: tmp
         emptyDir: {}
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: bookinfo-path
+spec:
+  stripPrefix:
+    prefixes:
+      - /bookinfo
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: productpage
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+    traefik.ingress.kubernetes.io/router.middlewares: beecloud-env-dev-bookinfo-path@kubernetescrd
+spec:
+  rules:
+    - host: litebeecloud.hrlyit.com
+      http:
+        paths:
+          - backend:
+              service:
+                name: productpage
+                port:
+                  number: 9080
+            path: /bookinfo
+            pathType: Prefix
