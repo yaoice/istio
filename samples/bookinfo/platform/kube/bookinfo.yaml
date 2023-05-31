@@ -408,10 +408,10 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: traefik
     traefik.ingress.kubernetes.io/router.entrypoints: web
-    traefik.ingress.kubernetes.io/router.middlewares: beecloud-env-dev-bookinfo-path@kubernetescrd
+    traefik.ingress.kubernetes.io/router.middlewares: dev-bookinfo-path@kubernetescrd
 spec:
   rules:
-    - host: litebeecloud.hrlyit.com
+    - host: lite.bcys.com
       http:
         paths:
           - backend:
