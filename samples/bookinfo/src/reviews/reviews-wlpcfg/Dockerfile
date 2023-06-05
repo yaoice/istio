@@ -14,7 +14,7 @@
 
 # Use library image once https://github.com/OpenLiberty/ci.docker/issues/241
 # is fixed
-FROM gcr.io/istio-testing/websphere-liberty:22.0.0.8-full-java8-ibmjava
+FROM gcr.dockerproxy.com/istio-testing/websphere-liberty:22.0.0.8-full-java8-ibmjava
 
 ENV SERVERDIRNAME reviews
 
